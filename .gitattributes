@@ -1,0 +1,5 @@
+fabric-samples filter=lfs diff=lfs merge=lfs -text
+Figures filter=lfs diff=lfs merge=lfs -text
+caliper filter=lfs diff=lfs merge=lfs -text
+Caliper_testing.xlsx filter=lfs diff=lfs merge=lfs -text
+fabric-samples.zip filter=lfs diff=lfs merge=lfs -text
