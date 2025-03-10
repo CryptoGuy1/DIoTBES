@@ -1,4 +1,4 @@
-IoT-Blockchain Environmental Sensing System
+Decetralized IoT-Blockchain for Environmental Sensing (DIoTBES)
 
 This guide provides a step-by-step tutorial for deploying a Hyperledger Fabric blockchain network integrated with IoT-based environmental sensing. The system enables secure and transparent data logging for methane and environmental data.
 
