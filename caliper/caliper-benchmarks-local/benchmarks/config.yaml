@@ -1,0 +1,209 @@
+test:
+  name: "Hyperledger Fabric v2.5.9 - Benchmark network"
+  workers:
+    type: local
+    number: 10
+  rounds:
+  # =========== Validation Round ================
+    - label: Create Asset - Validation Round
+      txNumber: 20000
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+      workload:
+        module: benchmarks/createAsset.js
+    # - label: Create Asset Go Chaincode - Fix  Rate
+    #   txNumber: 5
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 5
+    #   workload:
+    #     module: benchmarks/createAssetGo.js
+
+  # ===========================================================
+    # - label: Create Asset - Fix Rate - Node Chaincode
+    #   txNumber: 1000
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 100
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+    # - label: Create Asset Go Chaincode - Fix  Rate
+    #   txNumber: 3000
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 1100
+    #   workload:
+    #     module: benchmarks/createAssetGo.js
+
+    # - label: Create Asset - Fix Feedback Rate
+    #   txNumber: 1000
+    #   rateControl:
+    #     type: fixed-feedback-rate
+    #     opts:
+    #       tps: 100
+    #       transactionLoad: 100
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+    # - label: Create Asset - Fix Load
+    #   txNumber: 1000
+    #   rateControl:m Rate Controller, you can quickly find the upper limit of your Hyperledger Fabric network's 
+    #       # performance without manually adjusting the TPS. 
+    #       # The controller automatically ramps up the transaction rate until it reaches the maximum sustainable TPS for the SUT.
+
+    # - label: Create Asset - Maximum Rate
+    #   txNumber: 1000
+    #   # txDuration: 30
+    #   rateControl:
+    #     type: maximum-rate
+    #     opts:
+    #       tps: 80
+    #       step: 10
+    #       sampleInterval: 5
+    #       includeFailed: true
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+    # - label: Create Asset - Linear Rate
+    #   txNumber: 1000
+    #   rateControl:
+    #     type: linear-rate
+    #     opts:
+    #       startingTps: 25
+    #       finishingTps: 125
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+    # - label: Create Asset - composite-rate
+    #   txNumber: 2000
+    #   # txDuration: 30
+    #   rateControl:
+    #     type: composite-rate
+    #     opts:
+    #       weights: [2, 1, 2]
+    #       rateControllers:
+    #         - type: fixed-rate
+    #           opts:
+    #             tps: 200
+    #         - type: fixed-rate
+    #           opts:
+    #             tps: 300
+    #         - type: fixed-rate
+    #           opts:
+    #             tps: 400
+    #       logChange: true
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+    # - label: Create Asset - Zero rate
+    #   txNumber: 1000
+    #   rateControl:
+    #     type: composite-rate
+    #     opts:
+    #       weights: [2, 3, 2]
+    #       rateControllers:
+    #         - type: fixed-rate
+    #           opts:
+    #             tps: 100
+    #         - type: zero-rate
+    #           opts: {}
+    #         - type: fixed-rate
+    #           opts:
+    #             tps: 200
+    #       logChange: true
+    #   workload:
+    #     module: benchmarks/createAsset.js
+
+   #- label: Query Asset - Node chaincode
+   #  description: Get Asset.
+   #  txNumber: 1000
+   #  rateControl:
+   #    type: fixed-rate
+   #    opts:
+   #      tps: 200
+   #  workload:
+   #    module: benchmarks/queryAsset.js
+
+    # - label: Query Asset - Go Chaincode
+    #   description: Get Asset.
+    #   txNumber: 16000
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 4000
+    #   workload:
+    #     module: benchmarks/queryAssetGo.js
+
+# monitors:
+#   resource:
+  # - module: process
+  #   options:
+  #     interval: 1cle  
+  #     processes: [{ command: 'node', arguments: 'caliper.js', multiOutput: 'avg' }]
+
+# monitors:
+#   resource:
+#   - module: docker
+#     options:
+#       interval: 5
+#       containers:
+#       - all
+#       charting:
+#         bar:
+#           metrics: [Memory(avg), CPU%(avg)]
+#         polar:
+#           metrics: [all]
+
+# monitors:
+#   transaction:
+#   - module: prometheus
+#   resource:
+#   - module: docker
+#     options:
+#       interval: 1
+#       containers: ['all']
+
+monitors:
+  resource:
+  - module: docker
+    options:
+      interval: 5
+      cpuUsageNormalization: true
+      containers:
+      - all
+  - module: process
+    options:
+      interval: 1
+      processes: [{ command: 'node', arguments: 'caliper', multiOutput: 'avg' }]
+      charting:
+        bar:
+          metrics: [all]
+  
+      # charting:
+      #   bar:
+      #     metrics: [Memory(avg), CPU%(avg)]
+      #   polar:
+      #     metrics: [all]
+  # - module: prometheus
+  #   options:
+  #     url: "http://localhost:9090"
+  #     metrics:
+  #         include: [dev-.*, couch, peer, orderer]
+  #         queries:
+  #             - name: Endorse Time (s)
+  #               query: rate(endorser_propsal_duration_sum{chaincode="performance:v0"}[1m])/rate(endorser_propsal_duration_count{chaincode="performance:v0"}[1m])
+  #               step: 1
+  #               label: instance
+  #               statistic: avg
+  #             - name: Max Memory (MB)
+  #               query: sum(container_memory_rss{name=~".+"}) by (name)
+  #               step: 10
+  #               label: name
+  #               statistic: max
+  #               multiplier: 0.000001
